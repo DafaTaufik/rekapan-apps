@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -22,11 +23,14 @@ import androidx.compose.ui.unit.sp
 import com.df.rekapan.ui.components.DateBadge
 import com.df.rekapan.ui.components.Period
 import com.df.rekapan.ui.components.PeriodToggle
+import com.df.rekapan.ui.theme.AccentBlue
 import com.df.rekapan.ui.theme.NavyLight
 import com.df.rekapan.ui.theme.NavyPrimary
+import com.df.rekapan.ui.theme.PoppinsFamily
 import com.df.rekapan.ui.theme.RekapanTheme
 import com.df.rekapan.ui.theme.RubikFamily
 import com.df.rekapan.ui.theme.SoraFamily
+import com.df.rekapan.ui.theme.TextBlue
 
 /**
  * Root screen layout composed of two layers stacked in a [Box]:
@@ -132,7 +136,7 @@ fun HomeScreen(
         }
 
         // Content card — overlaps the header by ~6.6 % of screen height
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(1f - headerHeightFraction + 0.066f)
@@ -147,7 +151,81 @@ fun HomeScreen(
                 onPeriodSelected = { selectedPeriod = it },
                 modifier         = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 20.dp)
+                    .padding(horizontal = 19.dp, vertical = 16.dp)
+            )
+
+            SummaryCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 19.dp)
+            )
+        }
+    }
+}
+
+/**
+ * Summary card displayed below the period toggle.
+ *
+ * Two decorative circles are drawn at positions taken directly from Figma
+ * (coordinates are relative to the card's top-left corner).
+ * [Modifier.clip] ensures both circles are cropped to the card's rounded bounds.
+ */
+@Composable
+private fun SummaryCard(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .height(138.dp)
+            .clip(RoundedCornerShape(22.dp))
+            .background(NavyPrimary)
+            .drawBehind {
+                // Bottom circle — #1B6CA8 @ 35% opacity
+                // Figma bounding box: x=241, y=59, size=104×104 → center=(293, 111)
+                drawCircle(
+                    color  = AccentBlue.copy(alpha = 0.35f),
+                    radius = 52.dp.toPx(),
+                    center = Offset(293.dp.toPx(), 111.dp.toPx())
+                )
+
+                // Top circle — #0F3A78 @ 48% opacity
+                // Figma bounding box: x=277, y=-18, size=115×115 → center=(334.5, 39.5)
+                drawCircle(
+                    color  = NavyLight.copy(alpha = 0.48f),
+                    radius = 57.5.dp.toPx(),
+                    center = Offset(334.5.dp.toPx(), 39.5.dp.toPx())
+                )
+            }
+    ) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+        ) {
+            Text(
+                text       = "TOTAL PENDAPATAN",
+                fontFamily = PoppinsFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize   = 18.sp,
+                color      = Color.White
+            )
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text       = "Rp 4.280.000",
+                fontFamily = PoppinsFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize   = 30.sp,
+                color      = Color.White
+            )
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text       = "Lunas + Belum lunas",
+                fontFamily = PoppinsFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize   = 12.sp,
+                color      = TextBlue
             )
         }
     }
