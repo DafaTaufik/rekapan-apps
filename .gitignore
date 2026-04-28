@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+ANDROID_CONTEXT.md
